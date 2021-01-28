@@ -112,6 +112,9 @@ float SDM::readVal(uint16_t reg, uint8_t node) {
   while (sdmSer.available() < FRAMESIZE) {
     if (resptime < millis()) {
       readErr = SDM_ERR_TIMEOUT;                                                //err debug (4)
+      #ifdef DEBUG_SDM
+      DEBUG_PORT.print("ERROR : THERE IS NO COMMUNICATION!");
+      #endif
       break;
     }
     yield();
@@ -134,14 +137,23 @@ float SDM::readVal(uint16_t reg, uint8_t node) {
           ((uint8_t*)&res)[0]= sdmarr[6];
         } else {
           readErr = SDM_ERR_CRC_ERROR;                                          //err debug (1)
+          #ifdef DEBUG_SDM
+          DEBUG_PORT.print("ERROR : BAD CRC");
+          #endif
         }
 
       } else {
         readErr = SDM_ERR_WRONG_BYTES;                                          //err debug (2)
+        #ifdef DEBUG_SDM
+        DEBUG_PORT.print("ERROR : WRONG BYTES");
+        #endif
       }
 
     } else {
       readErr = SDM_ERR_NOT_ENOUGHT_BYTES;                                      //err debug (3)
+      #ifdef DEBUG_SDM
+      DEBUG_PORT.print("ERROR : NOT ENOUGH BYTES");
+      #endif
     }
 
   }
