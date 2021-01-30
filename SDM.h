@@ -224,6 +224,7 @@
 
 class SDM {
   public:
+  SDM(Stream & _serial, int dere_pin);
 #if defined ( USE_HARDWARESERIAL )                                              //  hardware serial
   #if defined ( ESP8266 )                                                       //  on esp8266
     SDM(HardwareSerial& serial, long baud = SDM_UART_BAUD, int dere_pin = DERE_PIN, int config = SDM_UART_CONFIG, bool swapuart = SWAPHWSERIAL);
@@ -251,11 +252,12 @@ class SDM {
     void clearSuccCount();                                                      //  clear total success count
 
   private:
-#if defined ( USE_HARDWARESERIAL )
-    HardwareSerial& sdmSer;
-#else
-    SoftwareSerial& sdmSer;
-#endif
+    Stream & sdmSer;
+// #if defined ( USE_HARDWARESERIAL )
+//     HardwareSerial& sdmSer;
+// #else
+//     SoftwareSerial& sdmSer;
+// #endif
 
 #if defined ( USE_HARDWARESERIAL )
     int _config = SDM_UART_CONFIG;

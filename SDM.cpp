@@ -6,70 +6,16 @@
 //------------------------------------------------------------------------------
 #include "SDM.h"
 //------------------------------------------------------------------------------
-#if defined ( USE_HARDWARESERIAL )
-#if defined ( ESP8266 )
-SDM::SDM(HardwareSerial& serial, long baud, int dere_pin, int config, bool swapuart) : sdmSer(serial) {
-  this->_baud = baud;
-  this->_dere_pin = dere_pin;
-  this->_config = config;
-  this->_swapuart = swapuart;
-}
-#elif defined ( ESP32 )
-SDM::SDM(HardwareSerial& serial, long baud, int dere_pin, int config, int8_t rx_pin, int8_t tx_pin) : sdmSer(serial) {
-  this->_baud = baud;
-  this->_dere_pin = dere_pin;
-  this->_config = config;
-  this->_rx_pin = rx_pin;
-  this->_tx_pin = tx_pin;
-}
-#else
-SDM::SDM(HardwareSerial& serial, long baud, int dere_pin, int config) : sdmSer(serial) {
-  this->_baud = baud;
-  this->_dere_pin = dere_pin;
-  this->_config = config;
-}
-#endif
-#else
-#if defined ( ESP8266 ) || defined ( ESP32 )
-SDM::SDM(SoftwareSerial& serial, long baud, int dere_pin, int config, int8_t rx_pin, int8_t tx_pin) : sdmSer(serial) {
-  this->_baud = baud;
-  this->_dere_pin = dere_pin;
-  this->_config = config;
-  this->_rx_pin = rx_pin;
-  this->_tx_pin = tx_pin;
-}
-#else
-SDM::SDM(SoftwareSerial& serial, long baud, int dere_pin) : sdmSer(serial) {
-  this->_baud = baud;
+SDM::SDM(Stream & _serial, int dere_pin) : sdmSer(_serial)
+{
   this->_dere_pin = dere_pin;
 }
-#endif
-#endif
 
 SDM::~SDM() {
 }
 
 void SDM::begin(void) {
-#if defined ( USE_HARDWARESERIAL )
-#if defined ( ESP8266 )
-  sdmSer.begin(_baud, (SerialConfig)_config);
-#elif defined ( ESP32 )
-  sdmSer.begin(_baud, _config, _rx_pin, _tx_pin);
-#else
-  sdmSer.begin(_baud, _config);
-#endif
-#else
-#if defined ( ESP8266 ) || defined ( ESP32 )
-  sdmSer.begin(_baud, (SoftwareSerialConfig)_config, _rx_pin, _tx_pin);
-#else
-  sdmSer.begin(_baud);
-#endif
-#endif
 
-#if defined ( USE_HARDWARESERIAL ) && defined ( ESP8266 )
-  if (_swapuart)
-    sdmSer.swap();
-#endif
   if (_dere_pin != NOT_A_PIN) {
     pinMode(_dere_pin, OUTPUT);                                                 //set output pin mode for DE/RE pin when used (for control MAX485)
   }
